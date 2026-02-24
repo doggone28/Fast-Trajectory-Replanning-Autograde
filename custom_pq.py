@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
 
 
 #!moving the elemnt idx to the root to maintain heap
@@ -62,15 +62,22 @@ class CustomPQ_maxG:
         key = (f, evilG)
         if state in self._best and self._best[state] <= key:
             return
-        #otherwise, we want to update the key and append
         self._best[state] = key
-        entry = (f, evilG, self._counter, state)
-        self._counter += 1
-        self._heap.append(entry)
-        idx = len(self._heap) - 1
-        self._index[state] = idx
-        sift_up(self._heap, idx)
-        self._rebuild_index_around(idx)
+        if state in self._index:
+            # state already in heap — update in-place to avoid ghost duplicates
+            idx = self._index[state]
+            old = self._heap[idx]
+            self._heap[idx] = (f, evilG, old[2], state)
+            sift_up(self._heap, idx)
+            self._rebuild_index_around(idx)
+        else:
+            entry = (f, evilG, self._counter, state)
+            self._counter += 1
+            self._heap.append(entry)
+            idx = len(self._heap) - 1
+            self._index[state] = idx
+            sift_up(self._heap, idx)
+            self._rebuild_index_around(idx)
     
     #!we only want to push if and only if the state has better priority than the best
 

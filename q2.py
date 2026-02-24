@@ -61,12 +61,148 @@ def repeated_forward_astar(
     tie_breaking: str = "max_g", # "min_g"
     visualize_callbacks: Optional[Dict[str, Callable[[Tuple[int, int]], None]]] = None,
 ) -> Tuple[bool, List[Tuple[int, int]], int, int]:
-    
-    # TODO: Implement Repeated Forward A* with min_g & max_g tie-braking strategies.
-    # Use heapq for standard priority queue implementation and name your max_g heap class as `CustomPQ_maxG` 
-    # and min_g heap class as `CustomPQ_minG`. Place them inside `custom_pq.py` file (see import statement in line 41).
-    # and use it. 
-    pass
+    """
+    Repeated Forward A* with freespace assumption.
+
+    Returns (found, executed_path, total_expanded, replans).
+    Tie-breaking:
+      'max_g' — prefer larger g-values among equal f  (uses CustomPQ_maxG)
+      'min_g' — prefer smaller g-values among equal f  (uses CustomPQ_minG)
+    """
+    ROWS_N = len(actual_maze)
+    COLS_N = len(actual_maze[0])
+    INF = float('inf')
+    DIRS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    def h(s: Tuple[int, int]) -> int:
+        """Manhattan distance heuristic to goal."""
+        return abs(s[0] - goal[0]) + abs(s[1] - goal[1])
+
+    # Agent's world model: only cells confirmed blocked are excluded.
+    # Unknown cells are treated as unblocked (freespace assumption).
+    known_blocked: set = set()
+
+    def observe(pos: Tuple[int, int]) -> None:
+        """Reveal the true blockage status of the 4 neighbours of pos."""
+        r, c = pos
+        for dr, dc in DIRS:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < ROWS_N and 0 <= nc < COLS_N:
+                if actual_maze[nr][nc] == 1:
+                    known_blocked.add((nr, nc))
+
+    def get_neighbors(s: Tuple[int, int]) -> List[Tuple[int, int]]:
+        """Passable neighbours under the freespace assumption."""
+        r, c = s
+        result = []
+        for dr, dc in DIRS:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < ROWS_N and 0 <= nc < COLS_N and (nr, nc) not in known_blocked:
+                result.append((nr, nc))
+        return result
+
+    # Per-cell A* bookkeeping (lazy-initialised via search_stamp)
+    g: Dict[Tuple[int, int], float] = {}          # g-values
+    search_stamp: Dict[Tuple[int, int], int] = {}  # last search that touched each cell
+    tree: Dict[Tuple[int, int], Tuple[int, int]] = {}  # tree-pointers for path reconstruction
+
+    counter = 0
+    agent = start
+    executed: List[Tuple[int, int]] = [start]
+    total_expanded = 0
+    replans = 0
+
+    # Agent sees its neighbours before the first search (Figure 4, implicit)
+    observe(agent)
+
+    # ---------- Main() from Figure 4 ----------
+    while agent != goal:
+        counter += 1
+        replans += 1
+
+        # Initialise start and goal for this search (lines 20-25 of pseudocode)
+        g[agent] = 0
+        search_stamp[agent] = counter
+        g[goal] = INF
+        search_stamp[goal] = counter
+
+        if tie_breaking == "max_g":
+            open_list = CustomPQ_maxG()
+            open_list.push(agent, h(agent), 0)
+        else:
+            open_list = CustomPQ_minG()
+            open_list.insert(agent, h(agent), 0)
+
+        closed: set = set()
+
+        # ---------- ComputePath() from Figure 4 ----------
+        while not open_list.is_empty():
+            # Pop state with smallest f (ties broken by the chosen strategy)
+            if tie_breaking == "max_g":
+                s, f_s, _ = open_list.pop()
+            else:
+                s = open_list.extract_min()
+                f_s = g.get(s, INF) + h(s)
+
+            # Termination condition (line 2): g(goal) <= min f in OPEN
+            # After popping s, f_s is the minimum f that was in OPEN.
+            if g[goal] <= f_s:
+                break
+
+            # Skip already-expanded states (consistent h guarantees this rarely fires)
+            if s in closed:
+                continue
+            closed.add(s)
+            total_expanded += 1
+
+            for nb in get_neighbors(s):
+                # Lazy initialisation (lines 6-8 of pseudocode)
+                if search_stamp.get(nb, 0) < counter:
+                    g[nb] = INF
+                    search_stamp[nb] = counter
+
+                # Relax edge (lines 9-13)
+                if g[nb] > g[s] + 1:
+                    g[nb] = g[s] + 1
+                    tree[nb] = s
+                    f_nb = g[nb] + h(nb)
+                    if tie_breaking == "max_g":
+                        if open_list.contains(nb):
+                            open_list.decrease_key(nb, f_nb, g[nb])
+                        else:
+                            open_list.push(nb, f_nb, g[nb])
+                    else:
+                        if open_list.contains(nb):
+                            open_list.update(nb, f_nb, g[nb])
+                        else:
+                            open_list.insert(nb, f_nb, g[nb])
+
+        # If goal was never reached, no path exists (line 27-29)
+        if g[goal] == INF:
+            return False, executed, total_expanded, replans
+
+        # Reconstruct path: follow tree-pointers from goal back to agent (line 30)
+        path: List[Tuple[int, int]] = []
+        cur = goal
+        while cur != agent:
+            path.append(cur)
+            cur = tree[cur]
+        path.append(agent)
+        path.reverse()
+
+        # Move agent along path until it reaches goal or a step is blocked (line 30-32)
+        for i in range(1, len(path)):
+            next_cell = path[i]
+            # next_cell is adjacent to agent, so already observed — check known blockage
+            if next_cell in known_blocked:
+                break  # path is blocked; outer loop will replan
+            agent = next_cell
+            executed.append(agent)
+            observe(agent)  # reveal neighbours from new position
+            if agent == goal:
+                return True, executed, total_expanded, replans
+
+    return True, executed, total_expanded, replans
 
 def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: str, fps: int = 240, step_delay_ms: int = 0, save_path: Optional[str] = None) -> None:
     # [BONUS] TODO: Place your visualization code here.

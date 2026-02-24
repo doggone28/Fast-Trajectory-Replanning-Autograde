@@ -63,6 +63,117 @@ def repeated_backward_astar(
 ) -> Tuple[bool, List[Tuple[int, int]], int, int]:
     
     # TODO: Implement Backward A* with max_g tie-braking strategy.
+    
+    INF = float('inf')
+    DIRS = [(-1, 0), (1,0),(0, -1), (0, 1)]
+    
+    knownBlocked: set = set()
+    
+    def observe(pos: Tuple[int, int]) -> None:
+        row, col = pos
+        for dRow, dCol in DIRS:
+            nr, nc = row + dRow, col + dCol
+            if 0 <= nr < ROWS and 0 <= nc < ROWS:
+                if actual_maze[nr][nc] == 1:
+                    knownBlocked.add((nr, nc))
+    
+    def getNeighbors(s: Tuple[int, int]) -> List[Tuple[int, int]]:
+        row, col = s
+        return [
+                    (row + dr, col + dc)
+                    for dr, dc in DIRS
+                    if 0 <= row + dr < ROWS and 0 <= col + dc < ROWS and (row + dr, col + dc) not in knownBlocked
+                ]
+        
+        
+        
+    g: Dict[Tuple[int, int], float] = {}
+    searchStamp: Dict[Tuple[int, int], int] = {}
+    tree: Dict[Tuple[int, int], Tuple[int, int]] = {}
+    counter = 0
+    agent = start
+    executed: List[Tuple[int, int]] = [start]
+    totalExpanded = 0
+    replans = 0
+    
+    observe(agent)
+    
+    while agent != goal:
+        counter += 1
+        replans += 1
+        
+        #?h(S) is Manhattan distance
+        
+        def h(s: Tuple[int, int]) -> int:
+            return abs(s[0] - agent[0]) + abs(s[1] - agent[1])
+    
+    searchStart = goal
+    searchEnd = agent
+    
+    g[searchStart] = 0 
+    searchStamp[searchStart] = counter
+    g[searchEnd] = INF
+    searchStamp[searchEnd] = counter
+    
+    openList = CustomPQ_maxG()
+    openList.push(searchStart, h(searchStart), 0)
+    closed: set = set()
+    
+    
+    while not openList.is_empty():
+        s, f_s, _ = openList.pop()
+        
+        if g[searchEnd] <= f_s:
+            break
+        
+        if s in closed:
+            continue
+        closed.add(s)
+        totalExpanded += 1
+        
+        for nb in getNeighbors(s):
+            if searchStamp.get(nb, 0):
+                g[nb] = INF
+                searchStamp[nb] = counter
+                
+            if g[nb] > g[s] + 1:
+                g[nb] = g[s] + 1
+                tree[nb] = s
+                f_nb = g[nb] + h(nb)
+                if openList.contains(nb):
+                    openList.decrease_key(nb, f_nb, g[nb])
+                    
+                else:
+                    openList.push(nb, f_nb, g[nb])
+                    
+    if g[searchEnd] == INF:
+        return False, executed, totalExpanded, replans
+    
+    path: List[Tuple[int, int]] = []
+    current = searchEnd
+    while current != searchStart:
+        path.append(current)
+        current = tree[current]
+    path.append(searchStart)
+    
+    
+    for i in range(1, len(path)):
+        nextCell = path[i]
+        if nextCell in knownBlocked:
+            break
+        agent = nextCell
+        executed.append(agent)
+        observe(agent)
+        if agent == goal:
+            return True, executed, totalExpanded, replans
+        
+        if any(path[j] in knownBlocked for j in range(i + 1, len(path))):
+            break
+        
+    return True, executed, totalExpanded, replans
+        
+    
+    
     # Use heapq for standard priority queue implementation and name your max_g heap class as `CustomPQ_maxG` and use it. 
     pass
 
