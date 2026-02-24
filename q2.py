@@ -216,6 +216,198 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
 
     if save_path is None:
         save_path = f"vis_{algo}.png"
+        
+    NL = NODE_LENGTH
+    OFF = GRID_LENGTH + GAP
+    DIRS = [(-1, 0), (1,0), (0, -1), (0, 1)]
+    clock = pygame.time.Clock()
+    
+    
+    
+    #?helper methods
+    
+    def fill(row: int, col: int, color, pane_x: int = 0) -> None:
+        pygame.draw.rect(win, color, (pane_x + col * NL, NL, NL))
+    
+    def gridLines(pane_x: int = 0) -> None:
+        for i in range(ROWS + 1):
+            pygame.draw.line(win, GREY, (pane_x, i * NL), (pane_x + GRID_LENGTH, i * NL))
+            pygame.draw.line(win, GREY, (pane_x + i*NL, 0), (pane_x + i*NL, GRID_LENGTH))
+    
+    
+    def draw_actual() -> None:
+        for r in range(ROWS):
+            for c in range(ROWS):
+                fill(r, c, BLACK if actual_maze[r][c] else WHITE)
+        gridLines(0)
+        
+        
+    def drawKnowledge(knownBlocked, openSet, closedSet, pathCells, agent) -> None:
+        for r in range(ROWS):
+            for c in range(ROWS):
+                cell = (r, c)
+                if cell in knownBlocked: color = BLACK
+                elif cell in closedSet: color = GREY
+                elif cell in openSet: color = YELLOW
+                else: color = WHITE
+                fill(r, c, color, OFF)
+                
+            
+        for cell in pathCells:
+            fill(cell[0], cell[1], PATH, OFF)
+            
+        fill(START_NODE[0], START_NODE[1]. YELLOW, OFF)
+        fill(END_NODE[0], END_NODE[1], BLUE, OFF)
+        fill(agent[0], agent[1], YELLOW, OFF)
+        
+        fill(agent[0], agent[1], YELLOW, 0)
+        gridLines(OFF)
+        
+        
+    def tick() -> None:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); raise SystemExit
+        
+        pygame.display.flip()
+        clock.tick(fps)
+        if step_delay_ms:
+            pygame.time.delay(step_delay_ms)
+            
+            
+    
+    knownBlocked: set = set()
+    
+    
+    def observe(pos):
+        r, c = pos
+        for dr, dc in DIRS:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < ROWS and 0 <= nc < ROWS:
+                if actual_maze[nr][nc] == 1:
+                    knownBlocked.add((nr, nc))
+                    
+    def h(s): return abs(s[0] - -END_NODE[0]) + abs(s[1] - END_NODE[1])
+    
+    
+    def neighbors(s):
+        r, c = s
+        
+        return [(r + dr, c + dc) for dr, dc in DIRS
+                if 0 <= r + dr < ROWS and 0 <= c + dc < ROWS
+                and (r+dr, c+dc) not in knownBlocked]
+        
+        
+        
+    tie = "min_g" if "min" in algo.lower() else "max_g"
+    agent = tuple(START_NODE)
+    goal = tuple(END_NODE)
+    executed = [agent]
+    expanded = replans = 0
+    found = False
+    
+    observe(agent)
+    draw_actual()
+    drawKnowledge(knownBlocked, set(), set(), [], agent)
+    tick()
+    
+    
+    INF = float("inf")
+    gVal: Dict[Tuple[int, int], float] = {}
+    
+    while agent != goal:
+        replans += 1
+        gVal[agent] = 0
+        gVal[goal] = INF
+        tree: Dict = {}
+        
+        
+        counter_pq = 0
+        open_heap  = [(h(agent), 0 if tie=="max_g" else 0, counter_pq, agent)]
+        open_set   = {agent}
+        closed_set: set = set()
+
+        path = None
+
+        while open_heap:
+            f_s, _, _, s = heapq.heappop(open_heap)
+            if s in closed_set:
+                continue
+            if gVal.get(goal, INF) <= f_s:
+                break
+
+            closed_set.add(s)
+            open_set.discard(s)
+            expanded += 1
+
+            # live draw every expansion
+            draw_actual()
+            drawKnowledge(knownBlocked, open_set, closed_set, [], agent)
+            tick()
+
+            for nb in neighbors(s):
+                if nb in closed_set:
+                    continue
+                if nb not in gVal:
+                    gVal[nb] = INF
+                ng = gVal[s] + 1
+                if ng < gVal.get(nb, INF):
+                    gVal[nb] = ng
+                    tree[nb]  = s
+                    f_nb  = ng + h(nb)
+                    # tie-break: max_g → negate g so larger g wins
+                    tb = -ng if tie == "max_g" else ng
+                    counter_pq += 1
+                    heapq.heappush(open_heap, (f_nb, tb, counter_pq, nb))
+                    open_set.add(nb)
+
+        if gVal.get(goal, INF) == INF:
+            print(f"[{algo}] Cannot reach the target.")
+            break
+
+        # reconstruct path
+        path = []
+        cur  = goal
+        while cur != agent:
+            path.append(cur); cur = tree[cur]
+        path.append(agent); path.reverse()
+
+        # draw planned path
+        draw_actual()
+        drawKnowledge(knownBlocked, set(), closed_set, path, agent)
+        tick()
+
+        # follow path
+        for step in path[1:]:
+            if step in knownBlocked:
+                break
+            agent = step
+            executed.append(agent)
+            observe(agent)
+            draw_actual()
+            drawKnowledge(knownBlocked, set(), closed_set, path, agent)
+            tick()
+            if agent == goal:
+                found = True; break
+            if any(p in knownBlocked for p in path[path.index(step)+1:]):
+                break
+        if found:
+            break
+
+    # ── final frame ───────────────────────────────────────────────────────
+    draw_actual()
+    drawKnowledge(knownBlocked, set(), executed, agent)
+    tick()
+
+    print(f"[{algo}] found={found}  executed_steps={len(executed)-1}"
+          f"  expanded={expanded}  replans={replans}")
+
+    pygame.image.save(win, save_path)
+    print(f"Saved visualization -> {save_path}")
+        
+        
+        
+    
 
     # If 'win' is the display surface (it is), this works:
     pygame.image.save(win, save_path)
