@@ -214,7 +214,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     #?helper methods
     
     def fill(row: int, col: int, color, pane_x: int = 0) -> None:
-        pygame.draw.rect(win, color, (pane_x + col * NL, NL, NL))
+        pygame.draw.rect(win, color, (pane_x + col * NL, row * NL, NL, NL))
     
     def gridLines(pane_x: int = 0) -> None:
         for i in range(ROWS + 1):
@@ -243,7 +243,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         for cell in pathCells:
             fill(cell[0], cell[1], PATH, OFF)
             
-        fill(START_NODE[0], START_NODE[1]. YELLOW, OFF)
+        fill(START_NODE[0], START_NODE[1], YELLOW, OFF)
         fill(END_NODE[0], END_NODE[1], BLUE, OFF)
         fill(agent[0], agent[1], YELLOW, OFF)
         
@@ -274,7 +274,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
                 if actual_maze[nr][nc] == 1:
                     knownBlocked.add((nr, nc))
                     
-    def h(s): return abs(s[0] - -END_NODE[0]) + abs(s[1] - END_NODE[1])
+    def h(s): return abs(s[0] - END_NODE[0]) + abs(s[1] - END_NODE[1])
     
     
     def neighbors(s):
@@ -304,6 +304,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     
     while agent != goal:
         replans += 1
+        gVal.clear()
         gVal[agent] = 0
         gVal[goal] = INF
         tree: Dict = {}
@@ -381,9 +382,11 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         if found:
             break
 
+    found = (agent == goal)
+
     # ── final frame ───────────────────────────────────────────────────────
     draw_actual()
-    drawKnowledge(knownBlocked, set(), executed, agent)
+    drawKnowledge(knownBlocked, set(), set(), executed, agent)
     tick()
 
     print(f"[{algo}] found={found}  executed_steps={len(executed)-1}"
@@ -391,14 +394,6 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
 
     pygame.image.save(win, save_path)
     print(f"Saved visualization -> {save_path}")
-        
-        
-        
-    
-
-    # If 'win' is the display surface (it is), this works:
-    pygame.image.save(win, save_path)
-    print(f"Saved the visualization -> {save_path}")
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Q5: Adaptive A*")
@@ -441,7 +436,7 @@ def main() -> None:
             actual_maze=mazes[maze_id],
             start=START_NODE,
             goal=END_NODE,
-            tie_braking="max_g",
+            tie_breaking="max_g",
         )
         t1 = time.perf_counter()
 

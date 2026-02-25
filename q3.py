@@ -106,70 +106,70 @@ def repeated_backward_astar(
         
         def h(s: Tuple[int, int]) -> int:
             return abs(s[0] - agent[0]) + abs(s[1] - agent[1])
-    
-    searchStart = goal
-    searchEnd = agent
-    
-    g[searchStart] = 0 
-    searchStamp[searchStart] = counter
-    g[searchEnd] = INF
-    searchStamp[searchEnd] = counter
-    
-    openList = CustomPQ_maxG()
-    openList.push(searchStart, h(searchStart), 0)
-    closed: set = set()
-    
-    
-    while not openList.is_empty():
-        s, f_s, _ = openList.pop()
-        
-        if g[searchEnd] <= f_s:
-            break
-        
-        if s in closed:
-            continue
-        closed.add(s)
-        totalExpanded += 1
-        
-        for nb in getNeighbors(s):
-            if searchStamp.get(nb, 0):
-                g[nb] = INF
-                searchStamp[nb] = counter
-                
-            if g[nb] > g[s] + 1:
-                g[nb] = g[s] + 1
-                tree[nb] = s
-                f_nb = g[nb] + h(nb)
-                if openList.contains(nb):
-                    openList.decrease_key(nb, f_nb, g[nb])
-                    
-                else:
-                    openList.push(nb, f_nb, g[nb])
-                    
-    if g[searchEnd] == INF:
-        return False, executed, totalExpanded, replans
-    
-    path: List[Tuple[int, int]] = []
-    current = searchEnd
-    while current != searchStart:
-        path.append(current)
-        current = tree[current]
-    path.append(searchStart)
-    
-    
-    for i in range(1, len(path)):
-        nextCell = path[i]
-        if nextCell in knownBlocked:
-            break
-        agent = nextCell
-        executed.append(agent)
-        observe(agent)
-        if agent == goal:
-            return True, executed, totalExpanded, replans
-        
-        if any(path[j] in knownBlocked for j in range(i + 1, len(path))):
-            break
-        
+
+        searchStart = goal
+        searchEnd = agent
+
+        g[searchStart] = 0
+        searchStamp[searchStart] = counter
+        g[searchEnd] = INF
+        searchStamp[searchEnd] = counter
+
+        openList = CustomPQ_maxG()
+        openList.push(searchStart, h(searchStart), 0)
+        closed: set = set()
+
+
+        while not openList.is_empty():
+            s, f_s, _ = openList.pop()
+
+            if g[searchEnd] <= f_s:
+                break
+
+            if s in closed:
+                continue
+            closed.add(s)
+            totalExpanded += 1
+
+            for nb in getNeighbors(s):
+                if searchStamp.get(nb, 0) < counter:
+                    g[nb] = INF
+                    searchStamp[nb] = counter
+
+                if g[nb] > g[s] + 1:
+                    g[nb] = g[s] + 1
+                    tree[nb] = s
+                    f_nb = g[nb] + h(nb)
+                    if openList.contains(nb):
+                        openList.decrease_key(nb, f_nb, g[nb])
+
+                    else:
+                        openList.push(nb, f_nb, g[nb])
+
+        if g[searchEnd] == INF:
+            return False, executed, totalExpanded, replans
+
+        path: List[Tuple[int, int]] = []
+        current = searchEnd
+        while current != searchStart:
+            path.append(current)
+            current = tree[current]
+        path.append(searchStart)
+
+
+        for i in range(1, len(path)):
+            nextCell = path[i]
+            if nextCell in knownBlocked:
+                break
+            agent = nextCell
+            executed.append(agent)
+            observe(agent)
+            if agent == goal:
+                return True, executed, totalExpanded, replans
+
+            if any(path[j] in knownBlocked for j in range(i + 1, len(path))):
+                break
+
     return True, executed, totalExpanded, replans
         
     
@@ -200,7 +200,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     #?helper methods
     
     def fill(row: int, col: int, color, pane_x: int = 0) -> None:
-        pygame.draw.rect(win, color, (pane_x + col * NL, NL, NL))
+        pygame.draw.rect(win, color, (pane_x + col * NL, row * NL, NL, NL))
     
     def gridLines(pane_x: int = 0) -> None:
         for i in range(ROWS + 1):
@@ -229,7 +229,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         for cell in pathCells:
             fill(cell[0], cell[1], PATH, OFF)
             
-        fill(START_NODE[0], START_NODE[1]. YELLOW, OFF)
+        fill(START_NODE[0], START_NODE[1], YELLOW, OFF)
         fill(END_NODE[0], END_NODE[1], BLUE, OFF)
         fill(agent[0], agent[1], YELLOW, OFF)
         
@@ -260,7 +260,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
                 if actual_maze[nr][nc] == 1:
                     knownBlocked.add((nr, nc))
                     
-    def h(s): return abs(s[0] - -END_NODE[0]) + abs(s[1] - END_NODE[1])
+    def h(s): return abs(s[0] - END_NODE[0]) + abs(s[1] - END_NODE[1])
     
     
     def neighbors(s):
@@ -290,6 +290,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     
     while agent != goal:
         replans += 1
+        gVal.clear()
         gVal[agent] = 0
         gVal[goal] = INF
         tree: Dict = {}
@@ -367,9 +368,11 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         if found:
             break
 
+    found = (agent == goal)
+
     # ── final frame ───────────────────────────────────────────────────────
     draw_actual()
-    drawKnowledge(knownBlocked, set(), executed, agent)
+    drawKnowledge(knownBlocked, set(), set(), executed, agent)
     tick()
 
     print(f"[{algo}] found={found}  executed_steps={len(executed)-1}"
@@ -377,14 +380,6 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
 
     pygame.image.save(win, save_path)
     print(f"Saved visualization -> {save_path}")
-        
-        
-        
-    
-
-    # If 'win' is the display surface (it is), this works:
-    pygame.image.save(win, save_path)
-    print(f"Saved the visualization -> {save_path}")
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Q3: Repeated Backward A*")
