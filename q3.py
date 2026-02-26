@@ -212,6 +212,8 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         for r in range(ROWS):
             for c in range(ROWS):
                 fill(r, c, BLACK if actual_maze[r][c] else WHITE)
+        fill(START_NODE[0], START_NODE[1], YELLOW)
+        fill(END_NODE[0], END_NODE[1], BLUE)
         gridLines(0)
         
         
