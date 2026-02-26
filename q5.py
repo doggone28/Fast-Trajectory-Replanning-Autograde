@@ -65,12 +65,7 @@ def adaptive_astar(
     """
     Adaptive A* with max_g tie-breaking.
 
-    Identical to Repeated Forward A* (max_g) except that after each ComputePath
-    the h-values of all expanded states are updated to  h(s) := g(goal) - g(s).
-    These tighter (yet still consistent) h-values are reused in future searches,
-    reducing the number of expansions over time.
-
-    Returns (found, executed_path, total_expanded, replans).
+    Manhattan distance updates h(s) := g(goal) - g(s) for all expanded states
     """
     ROWS_N = len(actual_maze)
     COLS_N = len(actual_maze[0])
@@ -80,13 +75,13 @@ def adaptive_astar(
     def manhattan(s: Tuple[int, int]) -> int:
         return abs(s[0] - goal[0]) + abs(s[1] - goal[1])
 
-    # h_val persists across searches; defaults to Manhattan distance for unseen states.
+    # h_val persists across searches -> defaults to Manhattan distance for unseen states
     h_val: Dict[Tuple[int, int], int] = {}
 
     def h(s: Tuple[int, int]) -> int:
         return h_val.get(s, manhattan(s))
 
-    # Agent's world model under the freespace assumption.
+    # Agent's world model under the freespace assumption
     known_blocked: set = set()
 
     def observe(pos: Tuple[int, int]) -> None:
@@ -106,7 +101,7 @@ def adaptive_astar(
                 result.append((nr, nc))
         return result
 
-    # Per-cell A* bookkeeping (lazy-initialised via search_stamp)
+    # Per-cell State memorization
     g: Dict[Tuple[int, int], float] = {}
     search_stamp: Dict[Tuple[int, int], int] = {}
     tree: Dict[Tuple[int, int], Tuple[int, int]] = {}
@@ -133,7 +128,7 @@ def adaptive_astar(
 
         closed: set = set()
 
-        # ComputePath (same as Repeated Forward A*, max_g variant)
+        # ComputePath -> same as repeated forward a* max_g variant
         while not open_list.is_empty():
             s, f_s, _ = open_list.pop()
 
@@ -162,14 +157,14 @@ def adaptive_astar(
         if g[goal] == INF:
             return False, executed, total_expanded, replans
 
-        # --- Adaptive A* h-value update (the key difference) ---
-        # For every state expanded in this search, tighten its heuristic.
-        # h_new(s) = g(goal) - g(s)  [proven consistent and >= previous h]
+        # Adaptive A* h-value update
+        # For every state expanded in this search -> tighten its heuristic
+        # h_new(s) = g(goal) - g(s)
         g_goal = g[goal]
         for s in closed:
             h_val[s] = int(g_goal - g[s])
 
-        # Reconstruct path via tree-pointers from goal back to agent
+        # Reconstruct path from goal to agent
         path: List[Tuple[int, int]] = []
         cur = goal
         while cur != agent:
@@ -178,7 +173,7 @@ def adaptive_astar(
         path.append(agent)
         path.reverse()
 
-        # Move agent along path until goal reached or a step turns out blocked
+        # Move agent along path until goal reached or step turns out blocked
         for i in range(1, len(path)):
             next_cell = path[i]
             if next_cell in known_blocked:
@@ -214,7 +209,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     #?helper methods
     
     def fill(row: int, col: int, color, pane_x: int = 0) -> None:
-        pygame.draw.rect(win, color, (pane_x + col * NL, NL, NL))
+        pygame.draw.rect(win, color, (pane_x + col * NL, row * NL, NL, NL))
     
     def gridLines(pane_x: int = 0) -> None:
         for i in range(ROWS + 1):
@@ -226,6 +221,8 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         for r in range(ROWS):
             for c in range(ROWS):
                 fill(r, c, BLACK if actual_maze[r][c] else WHITE)
+        fill(START_NODE[0], START_NODE[1], YELLOW)
+        fill(END_NODE[0], END_NODE[1], BLUE)
         gridLines(0)
         
         
@@ -243,7 +240,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         for cell in pathCells:
             fill(cell[0], cell[1], PATH, OFF)
             
-        fill(START_NODE[0], START_NODE[1]. YELLOW, OFF)
+        fill(START_NODE[0], START_NODE[1], YELLOW, OFF)
         fill(END_NODE[0], END_NODE[1], BLUE, OFF)
         fill(agent[0], agent[1], YELLOW, OFF)
         
@@ -274,7 +271,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
                 if actual_maze[nr][nc] == 1:
                     knownBlocked.add((nr, nc))
                     
-    def h(s): return abs(s[0] - -END_NODE[0]) + abs(s[1] - END_NODE[1])
+    def h(s): return abs(s[0] - END_NODE[0]) + abs(s[1] - END_NODE[1])
     
     
     def neighbors(s):
@@ -304,6 +301,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     
     while agent != goal:
         replans += 1
+        gVal.clear()
         gVal[agent] = 0
         gVal[goal] = INF
         tree: Dict = {}
@@ -381,9 +379,11 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         if found:
             break
 
+    found = (agent == goal)
+
     # ── final frame ───────────────────────────────────────────────────────
     draw_actual()
-    drawKnowledge(knownBlocked, set(), executed, agent)
+    drawKnowledge(knownBlocked, set(), set(), executed, agent)
     tick()
 
     print(f"[{algo}] found={found}  executed_steps={len(executed)-1}"
@@ -391,14 +391,6 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
 
     pygame.image.save(win, save_path)
     print(f"Saved visualization -> {save_path}")
-        
-        
-        
-    
-
-    # If 'win' is the display surface (it is), this works:
-    pygame.image.save(win, save_path)
-    print(f"Saved the visualization -> {save_path}")
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Q5: Adaptive A*")
@@ -441,7 +433,7 @@ def main() -> None:
             actual_maze=mazes[maze_id],
             start=START_NODE,
             goal=END_NODE,
-            tie_braking="max_g",
+            tie_breaking="max_g",
         )
         t1 = time.perf_counter()
 

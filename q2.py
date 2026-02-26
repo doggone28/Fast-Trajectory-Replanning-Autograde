@@ -29,7 +29,7 @@ from __future__ import annotations
 import heapq
 import argparse
 import json
-from time import time
+import time
 from typing import Callable, Dict, List, Optional, Tuple
 from tqdm import tqdm
 import pygame
@@ -62,12 +62,11 @@ def repeated_forward_astar(
     visualize_callbacks: Optional[Dict[str, Callable[[Tuple[int, int]], None]]] = None,
 ) -> Tuple[bool, List[Tuple[int, int]], int, int]:
     """
-    Repeated Forward A* with freespace assumption.
+    Repeated Forward A* 
 
-    Returns (found, executed_path, total_expanded, replans).
     Tie-breaking:
-      'max_g' — prefer larger g-values among equal f  (uses CustomPQ_maxG)
-      'min_g' — prefer smaller g-values among equal f  (uses CustomPQ_minG)
+      'max_g' prefers larger g-values among equal f  (CustomPQ_maxG)
+      'min_g' prefers smaller g-values among equal f  (CustomPQ_minG)
     """
     ROWS_N = len(actual_maze)
     COLS_N = len(actual_maze[0])
@@ -75,15 +74,15 @@ def repeated_forward_astar(
     DIRS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
     def h(s: Tuple[int, int]) -> int:
-        """Manhattan distance heuristic to goal."""
+        #Manhattan distance heuristic to goal
         return abs(s[0] - goal[0]) + abs(s[1] - goal[1])
 
-    # Agent's world model: only cells confirmed blocked are excluded.
-    # Unknown cells are treated as unblocked (freespace assumption).
+    # Agent excludes cells that are known to be blocked
+    # Unknown cells are assumed to be traversable
     known_blocked: set = set()
 
     def observe(pos: Tuple[int, int]) -> None:
-        """Reveal the true blockage status of the 4 neighbours of pos."""
+        #determines if an adjacent cell can be traversed
         r, c = pos
         for dr, dc in DIRS:
             nr, nc = r + dr, c + dc
@@ -92,7 +91,7 @@ def repeated_forward_astar(
                     known_blocked.add((nr, nc))
 
     def get_neighbors(s: Tuple[int, int]) -> List[Tuple[int, int]]:
-        """Passable neighbours under the freespace assumption."""
+        #returns neighbors that can be traversed
         r, c = s
         result = []
         for dr, dc in DIRS:
@@ -101,7 +100,7 @@ def repeated_forward_astar(
                 result.append((nr, nc))
         return result
 
-    # Per-cell A* bookkeeping (lazy-initialised via search_stamp)
+    # Per-cell state memorization (blocked or freespace)
     g: Dict[Tuple[int, int], float] = {}          # g-values
     search_stamp: Dict[Tuple[int, int], int] = {}  # last search that touched each cell
     tree: Dict[Tuple[int, int], Tuple[int, int]] = {}  # tree-pointers for path reconstruction
@@ -112,15 +111,14 @@ def repeated_forward_astar(
     total_expanded = 0
     replans = 0
 
-    # Agent sees its neighbours before the first search (Figure 4, implicit)
+    # Agent sees its neighbours before the first search
     observe(agent)
 
-    # ---------- Main() from Figure 4 ----------
     while agent != goal:
         counter += 1
         replans += 1
 
-        # Initialise start and goal for this search (lines 20-25 of pseudocode)
+        # Initialise start and goal for this search
         g[agent] = 0
         search_stamp[agent] = counter
         g[goal] = INF
@@ -135,33 +133,32 @@ def repeated_forward_astar(
 
         closed: set = set()
 
-        # ---------- ComputePath() from Figure 4 ----------
         while not open_list.is_empty():
-            # Pop state with smallest f (ties broken by the chosen strategy)
+            # Pop state with smallest f -> tie-breaking
             if tie_breaking == "max_g":
                 s, f_s, _ = open_list.pop()
             else:
                 s = open_list.extract_min()
                 f_s = g.get(s, INF) + h(s)
 
-            # Termination condition (line 2): g(goal) <= min f in OPEN
-            # After popping s, f_s is the minimum f that was in OPEN.
+            # Termination condition: g(goal) <= min f in OPEN
+            # After popping s, f_s is the minimum f that was in OPEN
             if g[goal] <= f_s:
                 break
 
-            # Skip already-expanded states (consistent h guarantees this rarely fires)
+            # Skip already-expanded states
             if s in closed:
                 continue
             closed.add(s)
             total_expanded += 1
 
             for nb in get_neighbors(s):
-                # Lazy initialisation (lines 6-8 of pseudocode)
+                #initialize if not visited
                 if search_stamp.get(nb, 0) < counter:
                     g[nb] = INF
                     search_stamp[nb] = counter
 
-                # Relax edge (lines 9-13)
+                # Relax edge
                 if g[nb] > g[s] + 1:
                     g[nb] = g[s] + 1
                     tree[nb] = s
@@ -177,11 +174,11 @@ def repeated_forward_astar(
                         else:
                             open_list.insert(nb, f_nb, g[nb])
 
-        # If goal was never reached, no path exists (line 27-29)
+        # If goal was never reached -> no path exists
         if g[goal] == INF:
             return False, executed, total_expanded, replans
 
-        # Reconstruct path: follow tree-pointers from goal back to agent (line 30)
+        # follow tree-pointers from goal back to agent
         path: List[Tuple[int, int]] = []
         cur = goal
         while cur != agent:
@@ -190,12 +187,12 @@ def repeated_forward_astar(
         path.append(agent)
         path.reverse()
 
-        # Move agent along path until it reaches goal or a step is blocked (line 30-32)
+        # Move agent along path until it reaches goal or a step is blocked
         for i in range(1, len(path)):
             next_cell = path[i]
-            # next_cell is adjacent to agent, so already observed — check known blockage
+            # cell already observed -> check known blockage
             if next_cell in known_blocked:
-                break  # path is blocked; outer loop will replan
+                break  # path is blocked -> outer loop will replan
             agent = next_cell
             executed.append(agent)
             observe(agent)  # reveal neighbours from new position
@@ -227,7 +224,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     #?helper methods
     
     def fill(row: int, col: int, color, pane_x: int = 0) -> None:
-        pygame.draw.rect(win, color, (pane_x + col * NL, NL, NL))
+        pygame.draw.rect(win, color, (pane_x + col * NL, row * NL, NL, NL))
     
     def gridLines(pane_x: int = 0) -> None:
         for i in range(ROWS + 1):
@@ -239,6 +236,8 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         for r in range(ROWS):
             for c in range(ROWS):
                 fill(r, c, BLACK if actual_maze[r][c] else WHITE)
+        fill(START_NODE[0], START_NODE[1], YELLOW)
+        fill(END_NODE[0], END_NODE[1], BLUE)
         gridLines(0)
         
         
@@ -256,7 +255,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         for cell in pathCells:
             fill(cell[0], cell[1], PATH, OFF)
             
-        fill(START_NODE[0], START_NODE[1]. YELLOW, OFF)
+        fill(START_NODE[0], START_NODE[1], YELLOW, OFF)
         fill(END_NODE[0], END_NODE[1], BLUE, OFF)
         fill(agent[0], agent[1], YELLOW, OFF)
         
@@ -287,7 +286,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
                 if actual_maze[nr][nc] == 1:
                     knownBlocked.add((nr, nc))
                     
-    def h(s): return abs(s[0] - -END_NODE[0]) + abs(s[1] - END_NODE[1])
+    def h(s): return abs(s[0] - END_NODE[0]) + abs(s[1] - END_NODE[1])
     
     
     def neighbors(s):
@@ -317,6 +316,7 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
     
     while agent != goal:
         replans += 1
+        gVal.clear()
         gVal[agent] = 0
         gVal[goal] = INF
         tree: Dict = {}
@@ -394,9 +394,11 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
         if found:
             break
 
+    found = (agent == goal)
+
     # ── final frame ───────────────────────────────────────────────────────
     draw_actual()
-    drawKnowledge(knownBlocked, set(), executed, agent)
+    drawKnowledge(knownBlocked, set(), set(), executed, agent)
     tick()
 
     print(f"[{algo}] found={found}  executed_steps={len(executed)-1}"
@@ -404,14 +406,6 @@ def show_astar_search(win: pygame.Surface, actual_maze: List[List[int]], algo: s
 
     pygame.image.save(win, save_path)
     print(f"Saved visualization -> {save_path}")
-        
-        
-        
-    
-
-    # If 'win' is the display surface (it is), this works:
-    pygame.image.save(win, save_path)
-    print(f"Saved the visualization -> {save_path}")
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Q2: Repeated Forward A*")
@@ -441,7 +435,7 @@ def main() -> None:
                 actual_maze=mazes[maze_id],
                 start=START_NODE,
                 goal=END_NODE,
-                tie_breaking=args.tie_braking
+                tie_breaking="max_g"
             )
             t1 = time.perf_counter()
 
@@ -459,7 +453,7 @@ def main() -> None:
                 actual_maze=mazes[maze_id],
                 start=START_NODE,
                 goal=END_NODE,
-                tie_breaking=args.tie_braking
+                tie_breaking="min_g"
             )
             t1 = time.perf_counter()
 

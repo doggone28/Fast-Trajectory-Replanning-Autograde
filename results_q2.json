@@ -1,0 +1,852 @@
+[
+  {
+    "maze_id": 0,
+    "max_g": {
+      "found": true,
+      "path_length": 376,
+      "expanded": 8850,
+      "replans": 88,
+      "runtime_ms": 102.77291600004901
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 256,
+      "expanded": 232383,
+      "replans": 63,
+      "runtime_ms": 615.3994999999668
+    }
+  },
+  {
+    "maze_id": 1,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 22384,
+      "replans": 125,
+      "runtime_ms": 214.16499999986627
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 436717,
+      "replans": 112,
+      "runtime_ms": 1152.9135830000996
+    }
+  },
+  {
+    "maze_id": 2,
+    "max_g": {
+      "found": true,
+      "path_length": 702,
+      "expanded": 15737,
+      "replans": 179,
+      "runtime_ms": 119.95666699999674
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 450,
+      "expanded": 270954,
+      "replans": 113,
+      "runtime_ms": 716.2739999998848
+    }
+  },
+  {
+    "maze_id": 3,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 19907,
+      "replans": 93,
+      "runtime_ms": 187.5303750000512
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 373475,
+      "replans": 96,
+      "runtime_ms": 987.9358329999377
+    }
+  },
+  {
+    "maze_id": 4,
+    "max_g": {
+      "found": true,
+      "path_length": 484,
+      "expanded": 12801,
+      "replans": 134,
+      "runtime_ms": 151.90662499981045
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 284,
+      "expanded": 285405,
+      "replans": 64,
+      "runtime_ms": 761.892792000026
+    }
+  },
+  {
+    "maze_id": 5,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 202,
+      "replans": 2,
+      "runtime_ms": 3.731666000021505
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 10101,
+      "replans": 2,
+      "runtime_ms": 25.268874999937907
+    }
+  },
+  {
+    "maze_id": 6,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.00783299992690445
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.0027090000003227033
+    }
+  },
+  {
+    "maze_id": 7,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 406,
+      "replans": 3,
+      "runtime_ms": 5.29191600003287
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 20204,
+      "replans": 3,
+      "runtime_ms": 48.62050000019735
+    }
+  },
+  {
+    "maze_id": 8,
+    "max_g": {
+      "found": true,
+      "path_length": 316,
+      "expanded": 8268,
+      "replans": 80,
+      "runtime_ms": 95.47937499996806
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 422,
+      "expanded": 319525,
+      "replans": 122,
+      "runtime_ms": 840.2718749998712
+    }
+  },
+  {
+    "maze_id": 9,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1592,
+      "replans": 9,
+      "runtime_ms": 26.362667000057627
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 77413,
+      "replans": 9,
+      "runtime_ms": 202.74416600000222
+    }
+  },
+  {
+    "maze_id": 10,
+    "max_g": {
+      "found": true,
+      "path_length": 322,
+      "expanded": 8322,
+      "replans": 87,
+      "runtime_ms": 97.02229200001966
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 312,
+      "expanded": 250337,
+      "replans": 82,
+      "runtime_ms": 664.6905840000272
+    }
+  },
+  {
+    "maze_id": 11,
+    "max_g": {
+      "found": true,
+      "path_length": 356,
+      "expanded": 7138,
+      "replans": 79,
+      "runtime_ms": 74.32204099995943
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 354,
+      "expanded": 238754,
+      "replans": 91,
+      "runtime_ms": 634.3374579998908
+    }
+  },
+  {
+    "maze_id": 12,
+    "max_g": {
+      "found": true,
+      "path_length": 330,
+      "expanded": 9134,
+      "replans": 81,
+      "runtime_ms": 114.80137499984266
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 358,
+      "expanded": 440651,
+      "replans": 98,
+      "runtime_ms": 1174.09449999991
+    }
+  },
+  {
+    "maze_id": 13,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 804,
+      "replans": 5,
+      "runtime_ms": 13.167541999791865
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 39608,
+      "replans": 5,
+      "runtime_ms": 102.5308750001841
+    }
+  },
+  {
+    "maze_id": 14,
+    "max_g": {
+      "found": true,
+      "path_length": 400,
+      "expanded": 12223,
+      "replans": 109,
+      "runtime_ms": 155.63425000004827
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 408,
+      "expanded": 446791,
+      "replans": 112,
+      "runtime_ms": 1194.9305420000655
+    }
+  },
+  {
+    "maze_id": 15,
+    "max_g": {
+      "found": true,
+      "path_length": 284,
+      "expanded": 6052,
+      "replans": 69,
+      "runtime_ms": 66.02391599994917
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 338,
+      "expanded": 204236,
+      "replans": 88,
+      "runtime_ms": 540.0174159999551
+    }
+  },
+  {
+    "maze_id": 16,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 17399,
+      "replans": 86,
+      "runtime_ms": 136.61666699999842
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 249898,
+      "replans": 79,
+      "runtime_ms": 662.4313329998586
+    }
+  },
+  {
+    "maze_id": 17,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.015458999996553757
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.003583000079743215
+    }
+  },
+  {
+    "maze_id": 18,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 20708,
+      "replans": 112,
+      "runtime_ms": 179.2217919999075
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 359277,
+      "replans": 90,
+      "runtime_ms": 968.9030419999654
+    }
+  },
+  {
+    "maze_id": 19,
+    "max_g": {
+      "found": true,
+      "path_length": 424,
+      "expanded": 10831,
+      "replans": 113,
+      "runtime_ms": 103.3446249998633
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 244,
+      "expanded": 225307,
+      "replans": 58,
+      "runtime_ms": 602.8221659998962
+    }
+  },
+  {
+    "maze_id": 20,
+    "max_g": {
+      "found": true,
+      "path_length": 328,
+      "expanded": 9422,
+      "replans": 87,
+      "runtime_ms": 117.79083300007187
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 314,
+      "expanded": 327134,
+      "replans": 90,
+      "runtime_ms": 882.866292000017
+    }
+  },
+  {
+    "maze_id": 21,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.018082999986290815
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.004374999889478204
+    }
+  },
+  {
+    "maze_id": 22,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 807,
+      "replans": 5,
+      "runtime_ms": 13.276958000005834
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 39906,
+      "replans": 5,
+      "runtime_ms": 101.23566600009326
+    }
+  },
+  {
+    "maze_id": 23,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 24168,
+      "replans": 140,
+      "runtime_ms": 217.0296659999167
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 450531,
+      "replans": 146,
+      "runtime_ms": 1215.945124999962
+    }
+  },
+  {
+    "maze_id": 24,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.019583000039347098
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.004332999878897681
+    }
+  },
+  {
+    "maze_id": 25,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 603,
+      "replans": 4,
+      "runtime_ms": 9.624499999972613
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 30102,
+      "replans": 4,
+      "runtime_ms": 77.18179199991937
+    }
+  },
+  {
+    "maze_id": 26,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 605,
+      "replans": 4,
+      "runtime_ms": 9.075582999912513
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 29805,
+      "replans": 4,
+      "runtime_ms": 78.70229199988898
+    }
+  },
+  {
+    "maze_id": 27,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 404,
+      "replans": 3,
+      "runtime_ms": 5.768499999931009
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 20202,
+      "replans": 3,
+      "runtime_ms": 50.06654199996774
+    }
+  },
+  {
+    "maze_id": 28,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.010666999969544122
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.0026249999791616574
+    }
+  },
+  {
+    "maze_id": 29,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.009249999948224286
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.002125000037267455
+    }
+  },
+  {
+    "maze_id": 30,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 18713,
+      "replans": 90,
+      "runtime_ms": 161.65408300003037
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 337163,
+      "replans": 91,
+      "runtime_ms": 926.989833000107
+    }
+  },
+  {
+    "maze_id": 31,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 402,
+      "replans": 3,
+      "runtime_ms": 7.437917000061134
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 20100,
+      "replans": 3,
+      "runtime_ms": 51.64212499994392
+    }
+  },
+  {
+    "maze_id": 32,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 3195,
+      "replans": 17,
+      "runtime_ms": 50.068582999983846
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 141900,
+      "replans": 17,
+      "runtime_ms": 389.0267499998572
+    }
+  },
+  {
+    "maze_id": 33,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.010666999969544122
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.00425000007453491
+    }
+  },
+  {
+    "maze_id": 34,
+    "max_g": {
+      "found": true,
+      "path_length": 270,
+      "expanded": 7251,
+      "replans": 70,
+      "runtime_ms": 90.97125000016604
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 310,
+      "expanded": 306919,
+      "replans": 92,
+      "runtime_ms": 830.5828749998909
+    }
+  },
+  {
+    "maze_id": 35,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 202,
+      "replans": 2,
+      "runtime_ms": 3.9149579999957496
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 10101,
+      "replans": 2,
+      "runtime_ms": 25.381792000189307
+    }
+  },
+  {
+    "maze_id": 36,
+    "max_g": {
+      "found": true,
+      "path_length": 374,
+      "expanded": 11023,
+      "replans": 102,
+      "runtime_ms": 135.73395799994614
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 340,
+      "expanded": 320447,
+      "replans": 94,
+      "runtime_ms": 863.197375000027
+    }
+  },
+  {
+    "maze_id": 37,
+    "max_g": {
+      "found": true,
+      "path_length": 386,
+      "expanded": 10426,
+      "replans": 109,
+      "runtime_ms": 129.1921669999283
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 328,
+      "expanded": 315811,
+      "replans": 88,
+      "runtime_ms": 857.321834000004
+    }
+  },
+  {
+    "maze_id": 38,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 20172,
+      "replans": 100,
+      "runtime_ms": 179.76874999999382
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 320932,
+      "replans": 102,
+      "runtime_ms": 861.0549170000468
+    }
+  },
+  {
+    "maze_id": 39,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 799,
+      "replans": 5,
+      "runtime_ms": 15.03095799989751
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 39795,
+      "replans": 5,
+      "runtime_ms": 104.12758300003588
+    }
+  },
+  {
+    "maze_id": 40,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.012166000033175806
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1,
+      "replans": 1,
+      "runtime_ms": 0.004084000011062017
+    }
+  },
+  {
+    "maze_id": 41,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 202,
+      "replans": 2,
+      "runtime_ms": 3.7793340000007447
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 10101,
+      "replans": 2,
+      "runtime_ms": 25.64595800004099
+    }
+  },
+  {
+    "maze_id": 42,
+    "max_g": {
+      "found": true,
+      "path_length": 322,
+      "expanded": 8993,
+      "replans": 88,
+      "runtime_ms": 108.90245900009177
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 296,
+      "expanded": 280883,
+      "replans": 81,
+      "runtime_ms": 763.4439170001315
+    }
+  },
+  {
+    "maze_id": 43,
+    "max_g": {
+      "found": true,
+      "path_length": 352,
+      "expanded": 9022,
+      "replans": 92,
+      "runtime_ms": 108.58774999996967
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 348,
+      "expanded": 288836,
+      "replans": 86,
+      "runtime_ms": 789.6544999998696
+    }
+  },
+  {
+    "maze_id": 44,
+    "max_g": {
+      "found": true,
+      "path_length": 356,
+      "expanded": 10259,
+      "replans": 100,
+      "runtime_ms": 122.48808300000746
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 368,
+      "expanded": 340536,
+      "replans": 91,
+      "runtime_ms": 932.5137499999983
+    }
+  },
+  {
+    "maze_id": 45,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 402,
+      "replans": 3,
+      "runtime_ms": 6.2025830000038695
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 20101,
+      "replans": 3,
+      "runtime_ms": 53.46745899987582
+    }
+  },
+  {
+    "maze_id": 46,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 1411,
+      "replans": 8,
+      "runtime_ms": 21.753750000016225
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 67847,
+      "replans": 8,
+      "runtime_ms": 185.76304099997287
+    }
+  },
+  {
+    "maze_id": 47,
+    "max_g": {
+      "found": true,
+      "path_length": 436,
+      "expanded": 12540,
+      "replans": 120,
+      "runtime_ms": 129.77904199988188
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 466,
+      "expanded": 324383,
+      "replans": 129,
+      "runtime_ms": 889.5867919998182
+    }
+  },
+  {
+    "maze_id": 48,
+    "max_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 20540,
+      "replans": 127,
+      "runtime_ms": 158.4701669999049
+    },
+    "min_g": {
+      "found": false,
+      "path_length": -1,
+      "expanded": 217365,
+      "replans": 85,
+      "runtime_ms": 591.1375840000801
+    }
+  },
+  {
+    "maze_id": 49,
+    "max_g": {
+      "found": true,
+      "path_length": 464,
+      "expanded": 13157,
+      "replans": 134,
+      "runtime_ms": 147.20675000012307
+    },
+    "min_g": {
+      "found": true,
+      "path_length": 346,
+      "expanded": 342732,
+      "replans": 94,
+      "runtime_ms": 941.0845840000093
+    }
+  }
+]
