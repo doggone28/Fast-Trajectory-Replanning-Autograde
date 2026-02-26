@@ -65,12 +65,7 @@ def adaptive_astar(
     """
     Adaptive A* with max_g tie-breaking.
 
-    Identical to Repeated Forward A* (max_g) except that after each ComputePath
-    the h-values of all expanded states are updated to  h(s) := g(goal) - g(s).
-    These tighter (yet still consistent) h-values are reused in future searches,
-    reducing the number of expansions over time.
-
-    Returns (found, executed_path, total_expanded, replans).
+    Manhattan distance updates h(s) := g(goal) - g(s) for all expanded states
     """
     ROWS_N = len(actual_maze)
     COLS_N = len(actual_maze[0])
@@ -80,13 +75,13 @@ def adaptive_astar(
     def manhattan(s: Tuple[int, int]) -> int:
         return abs(s[0] - goal[0]) + abs(s[1] - goal[1])
 
-    # h_val persists across searches; defaults to Manhattan distance for unseen states.
+    # h_val persists across searches -> defaults to Manhattan distance for unseen states
     h_val: Dict[Tuple[int, int], int] = {}
 
     def h(s: Tuple[int, int]) -> int:
         return h_val.get(s, manhattan(s))
 
-    # Agent's world model under the freespace assumption.
+    # Agent's world model under the freespace assumption
     known_blocked: set = set()
 
     def observe(pos: Tuple[int, int]) -> None:
@@ -106,7 +101,7 @@ def adaptive_astar(
                 result.append((nr, nc))
         return result
 
-    # Per-cell A* bookkeeping (lazy-initialised via search_stamp)
+    # Per-cell State memorization
     g: Dict[Tuple[int, int], float] = {}
     search_stamp: Dict[Tuple[int, int], int] = {}
     tree: Dict[Tuple[int, int], Tuple[int, int]] = {}
@@ -133,7 +128,7 @@ def adaptive_astar(
 
         closed: set = set()
 
-        # ComputePath (same as Repeated Forward A*, max_g variant)
+        # ComputePath -> same as repeated forward a* max_g variant
         while not open_list.is_empty():
             s, f_s, _ = open_list.pop()
 
@@ -162,14 +157,14 @@ def adaptive_astar(
         if g[goal] == INF:
             return False, executed, total_expanded, replans
 
-        # --- Adaptive A* h-value update (the key difference) ---
-        # For every state expanded in this search, tighten its heuristic.
-        # h_new(s) = g(goal) - g(s)  [proven consistent and >= previous h]
+        # Adaptive A* h-value update
+        # For every state expanded in this search -> tighten its heuristic
+        # h_new(s) = g(goal) - g(s)
         g_goal = g[goal]
         for s in closed:
             h_val[s] = int(g_goal - g[s])
 
-        # Reconstruct path via tree-pointers from goal back to agent
+        # Reconstruct path from goal to agent
         path: List[Tuple[int, int]] = []
         cur = goal
         while cur != agent:
@@ -178,7 +173,7 @@ def adaptive_astar(
         path.append(agent)
         path.reverse()
 
-        # Move agent along path until goal reached or a step turns out blocked
+        # Move agent along path until goal reached or step turns out blocked
         for i in range(1, len(path)):
             next_cell = path[i]
             if next_cell in known_blocked:
